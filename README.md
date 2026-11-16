@@ -215,3 +215,11 @@ O projeto utiliza um fluxo de branches, Pull Requests e validação automatizada
 - [Verificação manual dos gates staging/production](.github/workflows/environment-gates.yml)
 
 O workflow de CI instala as dependências, verifica a sintaxe Python e executa os testes automatizados com pytest. A configuração dos ambientes e das regras de proteção da main deve ser mantida nas Settings do repositório, conforme o PGC.
+
+## Adendo e evidências da N2-P2
+
+- [Adendo GCS - execução individual](docs/ADENDO_GCS_TRABALHO_INDIVIDUAL.md)
+- [Índice de evidências N2-P2](docs/evidencias/RELATORIO_N2_P2.md)
+- [Registro do push direto recusado (GH006)](docs/evidencias/PUSH_DIRETO_RECUSADO.md)
+
+O adendo preserva o contexto do plano original e registra a execução individual, os controles efetivamente configurados e o requisito de par de revisão não realizado.
