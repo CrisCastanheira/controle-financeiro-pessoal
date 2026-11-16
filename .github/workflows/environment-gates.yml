@@ -1,0 +1,25 @@
+name: Environment Gates (manual validation)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  staging-validation:
+    name: Validate staging environment
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - name: Confirm staging gate
+        run: echo "Staging gate reached. This project has no hosted application deployment."
+
+  production-approval:
+    name: Await production approval
+    needs: staging-validation
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Confirm production gate
+        run: echo "Production approval gate passed. No production deployment was performed."

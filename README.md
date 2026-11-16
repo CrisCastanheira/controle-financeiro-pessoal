@@ -203,3 +203,15 @@ docs: add project README
 ```
 
 O banco local e os arquivos gerados não devem ser enviados ao GitHub.
+
+
+## Gestão de Configuração
+
+O projeto utiliza um fluxo de branches, Pull Requests e validação automatizada para manter as alterações rastreáveis.
+
+- [Plano de Gerenciamento de Configuração (PGC)](docs/PLANO_GCS.md)
+- [Guia de onboarding e contribuição](docs/ONBOARDING.md)
+- [Workflow de Integração Contínua (CI)](.github/workflows/ci.yml)
+- [Verificação manual dos gates staging/production](.github/workflows/environment-gates.yml)
+
+O workflow de CI instala as dependências, verifica a sintaxe Python e executa os testes automatizados com pytest. A configuração dos ambientes e das regras de proteção da main deve ser mantida nas Settings do repositório, conforme o PGC.
