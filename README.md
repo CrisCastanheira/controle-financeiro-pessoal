@@ -63,9 +63,9 @@ controle-financeiro/
 
 ## Banco de dados
 
-O SQLite cria automaticamente `data/finance.db`.
+O SQLite cria automaticamente data/finance.db.
 
-Valores monetários são armazenados como inteiros em centavos. Por exemplo, R$ 10,50 é armazenado como `1050`. Essa estratégia evita os problemas de precisão comuns do `float` em cálculos financeiros.
+Valores monetários são armazenados como inteiros em centavos. Por exemplo, R$ 10,50 é armazenado como 1050. Essa estratégia evita os problemas de precisão comuns do float em cálculos financeiros.
 
 O programa usa parâmetros nas consultas SQL, evitando concatenar diretamente entradas do usuário nas queries.
 
@@ -111,11 +111,7 @@ No menu, escolha:
 6. Exportar dados para CSV
 ```
 
-O arquivo será criado em:
-
-```text
-exports/transactions.csv
-```
+O arquivo será criado em exports/transactions.csv.
 
 ## Gráficos
 
@@ -126,41 +122,18 @@ No menu, escolha:
 ```
 
 Serão gerados:
-
-- `exports/receitas_vs_despesas.png`
-- `exports/despesas_por_categoria.png`
-
-## Exemplo de uso
-
-```text
-Descrição: Salário
-Valor: 4000
-Categoria: Trabalho
-Data (DD/MM/AAAA): 19/08/2026
-```
-
-Resumo:
-
-```text
-========================================
-          RESUMO FINANCEIRO
-========================================
-Total de receitas: R$ 4.000,00
-Total de despesas: R$ 350,00
-Saldo:             R$ 3.650,00
-========================================
-```
+- exports/receitas_vs_despesas.png
+- exports/despesas_por_categoria.png
 
 ## O que aprendi
 
 Este projeto pratica:
-
 - variáveis e tipos de dados
 - funções
 - módulos e pacotes
 - classes e dataclasses
 - tratamento de exceções
-- `Decimal`
+- Decimal
 - manipulação de datas
 - SQLite e SQL
 - CRUD
@@ -203,3 +176,14 @@ docs: add project README
 ```
 
 O banco local e os arquivos gerados não devem ser enviados ao GitHub.
+
+## Gestão de Configuração
+
+O projeto utiliza um fluxo de branches, Pull Requests e validação automatizada para manter as alterações rastreáveis.
+
+- [Plano de Gerenciamento de Configuração (PGC)](docs/PLANO_GCS.md)
+- [Guia de onboarding e contribuição](docs/ONBOARDING.md)
+- [Workflow de Integração Contínua (CI)](.github/workflows/ci.yml)
+- [Verificação manual dos gates staging/production](.github/workflows/environment-gates.yml)
+
+O workflow de CI instala as dependências, verifica a sintaxe Python e executa os testes automatizados com pytest. A configuração dos ambientes e das regras de proteção da main deve ser mantida nas Settings do repositório, conforme o PGC.
