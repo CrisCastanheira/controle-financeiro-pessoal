@@ -276,3 +276,9 @@ Não há software de subcontratados ou fornecedores incorporado. As dependência
 | Release / baseline | Criar tag SemVer e publicar notas. | Validação e gate concluídos. |
 
 **Nota de estado (16/11/2026):** a proteção da main foi configurada e testada; staging e production foram criados e o workflow de gate foi executado com sucesso. O requisito de par de revisão permanece pendente. O projeto atual é local e não possui aplicação hospedada; os GitHub Environments são gates de aprovação, não servidores de aplicação.
+
+## Adendo e evidências da execução individual
+
+O plano original foi complementado pelo [Adendo GCS - execução individual](ADENDO_GCS_TRABALHO_INDIVIDUAL.md). O índice das comprovações está em [RELATORIO_N2_P2.md](evidencias/RELATORIO_N2_P2.md). A tentativa de push direto recusada está detalhada em [PUSH_DIRETO_RECUSADO.md](evidencias/PUSH_DIRETO_RECUSADO.md).
+
+O projeto e a atividade foram realizados individualmente, sem par de revisão. A ausência de revisão independente por colega permanece explicitamente registrada.
