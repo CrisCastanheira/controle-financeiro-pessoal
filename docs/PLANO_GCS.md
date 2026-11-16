@@ -247,10 +247,10 @@ Histórico GitHub e GitHub Actions são as evidências principais. Em cada entre
 2. PGC inicial elaborado em 21/09/2026 — concluído.
 3. Revisão conforme aulas e OngConecta — versão 1.1.
 4. Workflows CI e environment-gates versionados — incluídos nesta revisão; CI já executado com sucesso em commit da branch.
-5. Proteção clássica da main com PR, status check e sem bypass — pendente de configuração nas Settings.
-6. GitHub Environments staging e production — pendentes de configuração nas Settings.
+5. Proteção clássica da main com PR, status check tests e sem bypass — configurada e validada pelo teste de push direto em 16/11/2026. Exigência de aprovação de par permanece pendente até a inclusão de um colega real.
+6. GitHub Environments staging e production — criados e configurados em 16/11/2026; production exige CrisCastanheira como revisor obrigatório e restringe deployments à branch main. Workflow manual de validação concluído com sucesso.
 7. Par real com permissão Write e aprovação mínima no PR — pendente; colega ainda não definido.
-8. Evidência de push direto recusado — pendente após ativação da proteção.
+8. Evidência de push direto recusado — concluída em 16/11/2026. A tentativa recebeu GH006, com a mensagem “Changes must be made through a pull request” e indicação de que o status check tests é esperado. O registro está em docs/evidencias/PUSH_DIRETO_RECUSADO.md.
 9. Primeira release formal SemVer — futura.
 
 ## 12. Treinamento e recursos
@@ -275,4 +275,4 @@ Não há software de subcontratados ou fornecedores incorporado. As dependência
 | Gate production | Aprovação obrigatória de Cristiano no Environment production. | Preparação de liberação. |
 | Release / baseline | Criar tag SemVer e publicar notas. | Validação e gate concluídos. |
 
-**Nota de estado:** este PGC distingue recursos existentes de configurações pendentes. Proteção da branch, GitHub Environments e par de revisão só devem ser marcados como concluídos após configuração e verificação efetiva nas Settings. O projeto atual é local e não possui aplicação hospedada.
+**Nota de estado (16/11/2026):** a proteção da main foi configurada e testada; staging e production foram criados e o workflow de gate foi executado com sucesso. O requisito de par de revisão permanece pendente. O projeto atual é local e não possui aplicação hospedada; os GitHub Environments são gates de aprovação, não servidores de aplicação.
