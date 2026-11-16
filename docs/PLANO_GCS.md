@@ -128,128 +128,151 @@ Os commits seguem Conventional Commits: feat, fix, test, docs, refactor e chore,
 | Pull Request | Objetivo da mudança | Adiciona filtro por mês |
 
 ### 4.3 Estrutura do repositório
-A estrutura organizada terá .github/ (workflows, templates e Dependabot), app/ (cli, database, models, services, utils), data/ (dados locais ignorados), docs/ (PGC e onboarding), exports/ (arquivos gerados ignorados), tests/, .gitignore, README.md, requirements.txt e run.py.
+
+```text
+controle-financeiro-pessoal/
+├── .github/
+│   ├── ISSUE_TEMPLATE/
+│   │   └── change_request.md
+│   ├── pull_request_template.md
+│   ├── dependabot.yml
+│   └── workflows/
+│       ├── ci.yml
+│       └── environment-gates.yml
+├── app/
+│   ├── cli/
+│   ├── database/
+│   ├── models/
+│   ├── services/
+│   └── utils/
+├── data/                  # dados locais; banco ignorado
+├── docs/
+│   ├── ONBOARDING.md
+│   └── PLANO_GCS.md
+├── exports/               # arquivos gerados; ignorados
+├── tests/
+├── .gitignore
+├── README.md
+├── requirements.txt
+└── run.py
+```
 
 ## 5. Integração Contínua (CI)
 
-O workflow CI será mantido em .github/workflows/ci.yml e executará verificações em Pull Requests direcionados à main e em atualizações da branch principal. O pipeline também é um item de configuração versionado.
+O workflow CI é mantido em .github/workflows/ci.yml e executa verificações em Pull Requests direcionados à main e em atualizações da branch principal. O pipeline também é um item de configuração versionado.
 
 ### 5.1 Etapas do pipeline de CI
 1. Fazer checkout do repositório.
 2. Configurar Python 3.12 no runner.
-3. Atualizar pip e instalar as dependências declaradas em requirements.txt.
+3. Atualizar pip e instalar requirements.txt.
 4. Verificar sintaxe com python -m compileall -q app run.py.
-5. Executar a suíte com python -m pytest -q.
-6. Publicar o resultado do job como status check para uso na regra de proteção da main.
+5. Executar pytest -q.
+6. Publicar o resultado do job como status check para a regra de proteção da main.
 
 ### 5.2 Política de Pull Request e revisão
-Toda mudança destinada à main deve partir de uma branch e ser submetida por Pull Request. O PR deve explicar objetivo, impacto, itens de configuração alterados e testes executados. O CI precisa concluir com sucesso antes do merge. A política final deve exigir pelo menos uma aprovação de colaborador com permissão de escrita; essa aprovação fica pendente até a inclusão de um par real.
+Toda mudança destinada à main deve partir de uma branch e ser submetida por Pull Request. O PR deve explicar objetivo, impacto, ICs alterados e testes. O CI precisa concluir com sucesso antes do merge. A política final deve exigir pelo menos uma aprovação de colaborador com permissão de escrita; essa aprovação fica pendente até a inclusão de um par real.
 
-### 5.3 Critérios de qualidade (Quality Gate)
-- O workflow deve concluir sem falhas.
-- compileall deve concluir sem erro.
-- Todos os testes pytest devem passar.
-- Banco local, exportações, ambientes virtuais, caches e segredos não devem ser adicionados ao Git.
-- Alterações funcionais relevantes devem incluir ou atualizar testes quando aplicável.
+### 5.3 Critérios de qualidade
+- Workflow sem falhas.
+- compileall sem erros.
+- Todos os testes pytest aprovados.
+- Banco local, exports, ambientes virtuais, caches e segredos fora do Git.
+- Alterações funcionais relevantes acompanhadas de testes quando aplicável.
 
 ## 6. Entrega e implantação contínua (CD)
 
-A aplicação atual não está hospedada como serviço. Portanto, CD é tratado como preparação e publicação de uma versão identificável no GitHub, não como deploy de uma aplicação online.
+A aplicação não está hospedada como serviço. CD é tratado como preparação e publicação de versão identificável no GitHub, não como deploy online.
 
 ### 6.1 Etapas de entrega
 1. Confirmar CI aprovado para o commit candidato.
-2. Executar validação funcional local (python run.py) e conferir os testes.
+2. Executar validação funcional local (python run.py) e conferir testes.
 3. Criar tag SemVer no commit validado.
 4. Publicar GitHub Release com resumo das mudanças.
 5. Executar manualmente environment-gates.yml para demonstrar a validação em staging e a aprovação obrigatória em production; esse workflow não realiza deploy.
-6. Usar staging como etapa de validação e production como gate de aprovação da liberação.
-7. Caso o projeto passe a ser hospedado, atualizar este PGC antes de definir deploy, smoke tests e rollback de infraestrutura.
+6. Usar staging como etapa de validação e production como gate de aprovação.
+7. Se houver hospedagem futura, atualizar este PGC antes de definir deploy, smoke tests e rollback.
 
 ### 6.2 Estratégias de implantação
-Rolling update, Blue-Green e Canary Release não se aplicam à versão local atual. Feature flags também não são necessárias no estágio atual. A estratégia vigente é publicação de releases versionadas no GitHub.
+Rolling update, Blue-Green e Canary não se aplicam à versão local. Feature flags também não são necessárias no estágio atual. A estratégia vigente é publicar releases versionadas no GitHub.
 
 ### 6.3 Rollback e recuperação
-A recuperação consiste em identificar a última tag ou commit estável e retornar o código para essa referência. Como o banco SQLite e os exports são dados locais ignorados pelo Git, a restauração desses dados requer backup local. Uma futura hospedagem exigirá procedimento próprio de backup e rollback.
+A recuperação consiste em identificar a última tag ou commit estável e retornar o código a essa referência. Banco SQLite e exports são dados locais ignorados pelo Git; restauração desses dados requer backup local. Uma futura hospedagem exigirá procedimento próprio.
 
 ## 7. Infraestrutura como Código (IaC)
 
-IaC não é aplicável atualmente porque o sistema executa localmente e não provisiona servidores, redes, containers ou serviços externos. Os arquivos de configuração do repositório e workflows permanecem versionados. Caso seja adotada hospedagem, a infraestrutura e suas configurações deverão ser incorporadas ao PGC e versionadas.
+IaC não é aplicável porque o sistema executa localmente e não provisiona servidores, redes, containers ou serviços externos. Arquivos de configuração do repositório e workflows permanecem versionados. Se houver hospedagem, infraestrutura e configurações serão incorporadas ao PGC e versionadas.
 
 ### 7.1 Versionamento de infraestrutura
 Não há código IaC nem arquivo de estado no projeto. Mudanças futuras em infraestrutura seguirão branches, Pull Requests, revisão e validações.
 
 ### 7.2 Ambientes efêmeros
-Review Apps e ambientes efêmeros não se aplicam à aplicação de terminal atual. Os GitHub Environments staging e production funcionam como controles de etapa/aprovação, sem provisionamento de servidores.
+Review Apps e ambientes efêmeros não se aplicam à aplicação de terminal. Os GitHub Environments staging e production funcionam como controles de etapa/aprovação, sem provisionar servidores.
 
 ## 8. Controle de configuração e mudança
 
 ### 8.1 Processo de solicitação de mudança
-Fluxo padrão: registrar Issue (quando pertinente) → fazer check-out da main atualizada → criar branch → alterar e testar → fazer commits/check-in → abrir Pull Request → executar CI e revisão → integrar por merge → criar tag/release quando aplicável. Issue e PR mantêm rastreabilidade. Correções urgentes também devem ser registradas.
+Fluxo padrão: Issue (quando pertinente) → check-out da main atualizada → branch → alteração e testes → commits/check-in → Pull Request → CI e revisão → merge → tag/release quando aplicável. Issue e PR mantêm a rastreabilidade. Correções urgentes também devem ser registradas.
 
-### 8.2 Comitê de Controle de Mudanças (CCM)
-Como o projeto é individual, não existe CCM formal. Cristiano avalia mudanças de alto impacto, especialmente alterações na persistência SQLite, no formato dos dados, nas dependências ou no processo de release. Quando um par de revisão for designado, ele participará da revisão dos PRs. Decisões e justificativas devem permanecer registradas na Issue ou no PR.
+### 8.2 Comitê de Controle de Mudanças
+Não há CCM formal. Cristiano avalia mudanças de alto impacto, em especial alterações de persistência SQLite, formato de dados, dependências ou release. Quando um par de revisão for designado, participará dos PRs. Decisão e justificativa ficam na Issue ou PR.
 
 ## 9. Baselines e Releases
 
 ### 9.1 Geração de baseline
-Uma baseline corresponde a um commit estável na main, após CI aprovado e revisão prevista pela política. A release formal deve ser identificada por tag SemVer vinculada ao commit exato. A primeira baseline formal será marcada quando houver uma versão avaliada e liberada.
+Uma baseline corresponde a commit estável na main, após CI aprovado e revisão prevista na política. A release formal usa tag SemVer vinculada ao commit exato. A primeira baseline formal será marcada quando houver versão avaliada e liberada.
 
 ### 9.2 Notas de versão
-Cada GitHub Release deverá apresentar versão, data, resumo das funcionalidades, correções, alterações relevantes e limitações conhecidas. O histórico de commits Conventional Commits e os PRs servem como fonte para as notas.
+Cada GitHub Release apresentará versão, data, resumo de funcionalidades, correções, alterações e limitações conhecidas. Commits e PRs são a fonte das notas.
 
 ## 10. Estimativa do status de configuração
 
 ### 10.1 Monitoramento e auditoria
-O status da configuração será acompanhado pelo histórico de commits, branches, Issues, Pull Requests, resultados de Actions, tags e Releases. Não há serviço de produção hospedado para monitorar disponibilidade ou logs em execução. A auditoria verifica se os artefatos estão versionados, se os arquivos locais estão ignorados e se as regras de repositório estão ativas.
+O status é acompanhado por commits, branches, Issues, Pull Requests, resultados de Actions, tags e Releases. Não existe serviço hospedado para monitorar disponibilidade ou logs. A auditoria verifica artefatos versionados, arquivos locais ignorados e regras de repositório ativas.
 
 ### 10.2 Métricas DORA
 
-| Métrica | Aplicação no projeto |
+| Métrica | Aplicação |
 |---|---|
-| Deployment Frequency | Frequência de releases GitHub; não representa deploy de serviço online. |
-| Lead Time for Changes | Tempo entre abertura/primeiro commit e merge ou release, obtido pelo histórico. |
-| Change Failure Rate | Percentual de releases que exigem correção posterior; será mensurável com histórico suficiente. |
-| Mean Time to Restore (MTTR) | Tempo para retornar a uma versão estável via commit/tag; não há serviço online para medir indisponibilidade. |
-
-As métricas serão acompanhadas de forma qualitativa enquanto o projeto não possuir volume de releases suficiente para indicadores estatísticos úteis.
+| Deployment Frequency | Frequência de releases GitHub; não é deploy de serviço online. |
+| Lead Time for Changes | Tempo entre abertura/primeiro commit e merge ou release. |
+| Change Failure Rate | Percentual de releases que exigem correção posterior, com histórico suficiente. |
+| MTTR | Tempo para retornar a commit/tag estável; sem serviço online para medir indisponibilidade. |
 
 ### 10.3 Relatórios e auditorias
-O histórico do GitHub e os registros do GitHub Actions são a evidência principal. A cada entrega avaliativa, verificar estrutura do repositório, presença do PGC, proteção da main, resultado do CI, ambientes, revisor obrigatório e permissões do colaborador/par.
+Histórico GitHub e GitHub Actions são as evidências principais. Em cada entrega, verificar estrutura, PGC, proteção da main, CI, environments, revisor obrigatório e permissões do colaborador/par.
 
 ## 11. Marcos de GCS
 
-1. Repositório individual criado e estrutura inicial organizada — concluído.
-2. PGC inicial elaborado — concluído em 21/09/2026.
-3. Revisão do PGC conforme aulas e material OngConecta — em execução nesta versão 1.1.
-4. Workflows CI e environment-gates versionados — a concluir na publicação desta revisão.
-5. Proteção clássica da main com PR obrigatório, status check e sem bypass — pendente de configuração nas Settings do GitHub.
-6. Criação dos GitHub Environments staging e production — pendente de configuração nas Settings do GitHub.
-7. Definição do par, permissão Write e aprovação mínima no PR — pendente, por ausência de colega definido.
-8. Evidência de recusa de push direto na main — pendente de teste após ativação da proteção.
-9. Primeira release formal com tag SemVer — marco futuro.
+1. Repositório individual e estrutura inicial organizados — concluído.
+2. PGC inicial elaborado em 21/09/2026 — concluído.
+3. Revisão conforme aulas e OngConecta — versão 1.1.
+4. Workflows CI e environment-gates versionados — incluídos nesta revisão; CI já executado com sucesso em commit da branch.
+5. Proteção clássica da main com PR, status check e sem bypass — pendente de configuração nas Settings.
+6. GitHub Environments staging e production — pendentes de configuração nas Settings.
+7. Par real com permissão Write e aprovação mínima no PR — pendente; colega ainda não definido.
+8. Evidência de push direto recusado — pendente após ativação da proteção.
+9. Primeira release formal SemVer — futura.
 
 ## 12. Treinamento e recursos
 
-Os recursos necessários são Git, GitHub, GitHub Actions, Python 3, SQLite, pytest e matplotlib. O responsável deve conhecer operações de check-out/check-in, branches, merge, tags, Issues, Pull Requests, leitura do resultado de CI e recuperação por commit/tag. O guia docs/ONBOARDING.md documenta os passos para configurar e executar o projeto.
+Recursos necessários: Git, GitHub, GitHub Actions, Python 3, SQLite, pytest e matplotlib. O responsável deve conhecer check-out/check-in, branches, merge, tags, Issues, Pull Requests, leitura do CI e recuperação por commit/tag. O guia docs/ONBOARDING.md documenta configuração e execução.
 
-O canal de comunicação e a janela de resposta a PRs ainda não foram definidos porque o projeto está sendo desenvolvido individualmente. Caso um colaborador seja adicionado, README/guia deverá registrar o canal acordado e o prazo de resposta combinado, sem presumir um acordo inexistente.
+Canal de comunicação e janela de resposta a PRs não foram definidos porque o projeto é individual. Se um colaborador for adicionado, README/guia deverá registrar o canal e o prazo acordados, sem presumir acordo inexistente.
 
-## 13. Controle de software de subcontratados, fornecedores e dependências de terceiros
+## 13. Controle de software de subcontratados, fornecedores e dependências
 
-Não há software desenvolvido por subcontratados ou fornecedores incorporado ao projeto. As dependências externas atuais são matplotlib e pytest, declaradas em requirements.txt. A biblioteca padrão do Python não requer instalação externa. Atualizações devem ser controladas, registradas em branch e validadas no CI. O Dependabot acompanhará atualizações de dependências Python e GitHub Actions. Nenhuma credencial ou segredo deve ser armazenado no repositório.
+Não há software de subcontratados ou fornecedores incorporado. As dependências externas atuais são matplotlib e pytest, declaradas em requirements.txt. Atualizações devem ser controladas em branch, registradas e validadas no CI. Dependabot acompanhará dependências Python e GitHub Actions. Segredos não devem ser armazenados no repositório.
 
 ## 14. Quadro-resumo do pipeline CI/CD
 
 | Etapa | Descrição | Gatilho |
 |---|---|---|
-| Check-out / branch | Atualizar main e criar branch feature/fix. | Início de uma mudança. |
+| Check-out / branch | Atualizar main e criar branch feature/fix. | Início de mudança. |
 | CI | Configurar Python, instalar dependências, verificar sintaxe e executar pytest. | Push e Pull Request. |
-| Revisão | Conferir diff, objetivo, impactos, ICs e evidências de teste. | Pull Request aberto/atualizado. |
-| Merge | Integrar na main após CI verde e aprovação exigida pela regra. | PR aprovado e checks concluídos. |
-| Staging | Etapa de homologação/validação controlada no GitHub; verificação manual pelo environment-gates.yml, sem servidor. | Após CI e merge, conforme fluxo de release. |
-| Gate de production | Aprovação obrigatória de Cristiano Castanheira no GitHub Environment production. | Preparação de release/liberação. |
-| Release / baseline | Criar tag SemVer e publicar notas no GitHub. | Validação concluída e gate aprovado. |
+| Revisão | Conferir diff, objetivo, impacto, ICs e testes. | PR aberto/atualizado. |
+| Merge | Integrar após CI verde e aprovação exigida. | PR aprovado e checks concluídos. |
+| Staging | Etapa de homologação/validação controlada no GitHub; verificação pelo environment-gates.yml, sem servidor. | Após CI e merge, conforme fluxo de release. |
+| Gate production | Aprovação obrigatória de Cristiano no Environment production. | Preparação de liberação. |
+| Release / baseline | Criar tag SemVer e publicar notas. | Validação e gate concluídos. |
 
----
-
-**Nota de estado:** este PGC distingue recursos existentes de configurações pendentes no GitHub. As regras de proteção da branch, os GitHub Environments e o par de revisão só devem ser marcados como concluídos depois da configuração e da verificação efetiva nas Settings do repositório. O projeto atual é local e não possui aplicação hospedada.
+**Nota de estado:** este PGC distingue recursos existentes de configurações pendentes. Proteção da branch, GitHub Environments e par de revisão só devem ser marcados como concluídos após configuração e verificação efetiva nas Settings. O projeto atual é local e não possui aplicação hospedada.
